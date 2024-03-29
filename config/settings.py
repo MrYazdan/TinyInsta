@@ -5,6 +5,7 @@ USE_TZ = True
 USE_I18N = True
 LANGUAGE_CODE = "en-us"
 ROOT_URLCONF = "config.urls"
+AUTH_USER_MODEL = "user.User"
 WSGI_APPLICATION = "config.wsgi.application"
 TIME_ZONE = config("TIME_ZONE", default="UTC")
 DEBUG = config("DEBUG", cast=bool, default=True)
@@ -19,12 +20,6 @@ ALLOWED_HOSTS = (
     )
 )
 
-GLOBAL_MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-]
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
@@ -34,51 +29,53 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
 # Applications
-APPLICATIONS = ["core"]
+APPLICATIONS = ["core", "user", "post"]
+
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    *list(map(lambda app: f"apps.{app}", APPLICATIONS)),
+]
 
 # Serving
 STATIC_URL = "static/"
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = BASE_DIR / "storage/media"
 
 # Mode Handling:
 if DEBUG:
-    INSTALLED_APPS = [
-        "django.contrib.admin",
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.messages",
-        "django.contrib.staticfiles",
-        *APPLICATIONS,
-    ]
-
-    TEMPLATES = [
-        {
-            "BACKEND": "django.template.backends.django.DjangoTemplates",
-            "DIRS": [BASE_DIR / "templates"],
-            "APP_DIRS": True,
-            "OPTIONS": {
-                "context_processors": [
-                    "django.template.context_processors.debug",
-                    "django.template.context_processors.request",
-                    "django.contrib.auth.context_processors.auth",
-                    "django.contrib.messages.context_processors.messages",
-                ],
-            },
-        },
-    ]
-
-    MIDDLEWARE = [
-        *GLOBAL_MIDDLEWARE,
-        "django.contrib.sessions.middleware.SessionMiddleware",
-        "django.middleware.csrf.CsrfViewMiddleware",
-        "django.contrib.messages.middleware.MessageMiddleware",
-        "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    ]
-
-    STATICFILES_DIRS = [BASE_DIR / "static"]
+    STATICFILES_DIRS = [BASE_DIR / "storage/static"]
 
     DATABASES = {
         "default": {
@@ -102,16 +99,6 @@ if DEBUG:
     DEFAULT_FROM_EMAIL = "noreply@maktab105.dev"
 
 else:
-    INSTALLED_APPS = [
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        *APPLICATIONS,
-    ]
-
-    TEMPLATES = []
-
-    MIDDLEWARE = [*GLOBAL_MIDDLEWARE]
-
     REDIS_URL = f"redis://{config('REDIS_HOST')}:{config('REDIS_PORT')}"
 
     DATABASES = {

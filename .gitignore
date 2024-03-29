@@ -147,3 +147,10 @@ cython_debug/
 
 # PyCharm
 .idea/
+
+!tmp
+!storage/media
+tmp/**
+storage/media/**
+**/migrations/**
+!**/migrations/__init__.py
