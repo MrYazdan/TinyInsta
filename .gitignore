@@ -154,3 +154,4 @@ tmp/**
 storage/media/**
 **/migrations/**
 !**/migrations/__init__.py
+shell.py

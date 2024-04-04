@@ -10,6 +10,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 TIME_ZONE = config("TIME_ZONE", default="UTC")
 DEBUG = config("DEBUG", cast=bool, default=True)
 BASE_DIR = Path(__file__).resolve().parent.parent
+APP_DIR = BASE_DIR / "apps"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SECRET_KEY = config("SECRET_KEY", default="secret-key-!!!")
 ALLOWED_HOSTS = (
@@ -65,6 +66,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Third-party
+    "taggit",
+    # Application
     *list(map(lambda app: f"apps.{app}", APPLICATIONS)),
 ]
 
