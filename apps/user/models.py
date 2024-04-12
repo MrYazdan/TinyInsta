@@ -10,7 +10,7 @@ from apps.core.models import TimeStampMixin, LogicalMixin
 
 class User(LogicalMixin, AbstractUser, TimeStampMixin):
     username_validator = RegexValidator(
-        r"^[a-zA-Z0-9]*$", "Only alphanumeric characters are allowed."
+        r"^[a-zA-Z0-9_]*$", "Only alphanumeric characters are allowed."
     )
 
     email = models.EmailField(unique=True)
@@ -24,6 +24,9 @@ class User(LogicalMixin, AbstractUser, TimeStampMixin):
         max_length=255,
         blank=True,
         null=True,
+    )
+    followings = models.ManyToManyField(
+        "self", related_name="followers", symmetrical=False
     )
 
     objects = UserManager()

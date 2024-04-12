@@ -1,8 +1,12 @@
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.contrib import admin
 
-urlpatterns = []
+urlpatterns = [
+    path("", include("public.urls")),
+    path("", include("apps.user.urls")),
+    path("", include("apps.post.urls")),
+]
 
 if settings.DEBUG:
     from django.conf.urls.static import static

@@ -1,9 +1,9 @@
 from functools import partial
 from django.db import models
-
 from utils.filename import maker
 from taggit.managers import TaggableManager
 from apps.post.managers import CommentManager
+from apps.core.managers import LogicalManager
 from apps.core.models import TimeStampMixin, LogicalMixin
 from django.core.validators import FileExtensionValidator
 
@@ -38,12 +38,15 @@ class Post(TimeStampMixin, LogicalMixin):
 class Comment(TimeStampMixin, LogicalMixin):
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey("user.User", on_delete=models.CASCADE)
-    reply = models.ForeignKey(
-        "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="replies"
-    )
+    reply = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
 
     objects = CommentManager()
+    _custom = LogicalManager()
+
+    @property
+    def replies(self):
+        return self.comment_set(manager="_custom")
 
 
 class Like(TimeStampMixin):
