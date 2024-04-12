@@ -1,5 +1,5 @@
-from functools import partial
 from django.db import models
+from functools import partial
 from utils.filename import maker
 from taggit.managers import TaggableManager
 from apps.post.managers import CommentManager
@@ -12,7 +12,7 @@ class Media(TimeStampMixin):
     position = models.PositiveIntegerField(null=False)
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="media")
     file = models.FileField(
-        upload_to=partial(maker, "posts/media"),
+        upload_to=partial(maker, "posts"),
         validators=[
             FileExtensionValidator(
                 allowed_extensions=["jpeg", "png", "jpg", "gif", "mp4", "avi", "flv"]
@@ -26,7 +26,9 @@ class Media(TimeStampMixin):
 
 class Post(TimeStampMixin, LogicalMixin):
     title = models.CharField(max_length=125)
-    author = models.ForeignKey("user.User", on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        "user.User", on_delete=models.CASCADE, related_name="posts"
+    )
     caption = models.TextField()
     location = models.CharField(max_length=125, null=True, blank=True)
     tags = TaggableManager()
@@ -37,7 +39,9 @@ class Post(TimeStampMixin, LogicalMixin):
 
 class Comment(TimeStampMixin, LogicalMixin):
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="comments")
-    user = models.ForeignKey("user.User", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        "user.User", on_delete=models.CASCADE, related_name="comments"
+    )
     reply = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
 
@@ -52,7 +56,9 @@ class Comment(TimeStampMixin, LogicalMixin):
 class Like(TimeStampMixin):
     modify_at = None
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="likes")
-    user = models.ForeignKey("user.User", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        "user.User", on_delete=models.CASCADE, related_name="likes"
+    )
 
     class Meta:
         unique_together = ("post", "user")

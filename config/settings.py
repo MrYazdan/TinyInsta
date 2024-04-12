@@ -4,6 +4,7 @@ from decouple import config
 USE_TZ = True
 USE_I18N = True
 LANGUAGE_CODE = "en-us"
+LOGIN_URL = "/auth/login"
 ROOT_URLCONF = "config.urls"
 AUTH_USER_MODEL = "user.User"
 WSGI_APPLICATION = "config.wsgi.application"
@@ -11,7 +12,6 @@ TIME_ZONE = config("TIME_ZONE", default="UTC")
 DEBUG = config("DEBUG", cast=bool, default=True)
 BASE_DIR = Path(__file__).resolve().parent.parent
 APP_DIR = BASE_DIR / "apps"
-LOGIN_URL = "/auth/login"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SECRET_KEY = config("SECRET_KEY", default="secret-key-!!!")
 AUTHENTICATION_BACKENDS = ["apps.user.backend.ModelBackend"]
@@ -37,7 +37,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",

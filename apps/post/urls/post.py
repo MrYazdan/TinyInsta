@@ -1,6 +1,6 @@
 urlpatterns = [
-    #  /(post)
-    #  /(post)/<id>
-    #  /(post)/like/<id>
-    #  /(post)/comment/<id>
+    #  /(posts)
+    #  /(posts)/<id>
+    #  /(posts)/like/<id>
+    #  /(posts)/comment/<id>
 ]

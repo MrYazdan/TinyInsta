@@ -8,6 +8,25 @@ from django.utils.translation import gettext_lazy as _
 from apps.core.models import TimeStampMixin, LogicalMixin
 
 
+class Following(TimeStampMixin):
+    follower = models.ForeignKey(
+        "User", on_delete=models.CASCADE, related_name="_followings"
+    )
+    following = models.ForeignKey(
+        "User", on_delete=models.CASCADE, related_name="_followers"
+    )
+    modify_at = False
+
+    class Meta:
+        unique_together = ("follower", "following")
+        constraints = [
+            models.CheckConstraint(
+                check=~models.Q(follower=models.F("following")),
+                name="not_prevent_self_follow",
+            )
+        ]
+
+
 class User(LogicalMixin, AbstractUser, TimeStampMixin):
     username_validator = RegexValidator(
         r"^[a-zA-Z0-9_]*$", "Only alphanumeric characters are allowed."
@@ -25,9 +44,20 @@ class User(LogicalMixin, AbstractUser, TimeStampMixin):
         blank=True,
         null=True,
     )
-    followings = models.ManyToManyField(
-        "self", related_name="followers", symmetrical=False
-    )
+
+    def follow(self, user):
+        Following.objects.get_or_create(
+            follower=self,
+            following=user,
+        )
+
+    @property
+    def followers(self):
+        return [f.follower for f in self._followers.all()]
+
+    @property
+    def followings(self):
+        return [f.following for f in self._followings.all()]
 
     objects = UserManager()
 
