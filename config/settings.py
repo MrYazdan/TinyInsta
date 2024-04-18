@@ -71,6 +71,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party
     "taggit",
+    "rest_framework",
+    "corsheaders",
     # Application
     *list(map(lambda app: f"apps.{app}", APPLICATIONS)),
 ]
@@ -82,6 +84,7 @@ MEDIA_ROOT = BASE_DIR / "storage/media"
 
 # Mode Handling:
 if DEBUG:
+    CORS_ORIGIN_ALLOW_ALL = True
     STATICFILES_DIRS = [BASE_DIR / "storage/static"]
 
     DATABASES = {
