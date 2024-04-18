@@ -46,11 +46,11 @@ class Comment(TimeStampMixin, LogicalMixin):
     content = models.TextField()
 
     objects = CommentManager()
-    _custom = LogicalManager()
+    custom = LogicalManager()
 
     @property
     def replies(self):
-        return self.comment_set(manager="_custom")
+        return self.comment_set(manager="custom")
 
 
 class Like(TimeStampMixin):

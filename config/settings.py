@@ -82,6 +82,7 @@ STATIC_URL = "static/"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "storage/media"
 
+
 # Mode Handling:
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
