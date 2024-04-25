@@ -1,12 +1,17 @@
 from uuid import uuid4
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 from utils import cache, mail
 from django.http import response
 from django.views import generic
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login
+from apps.user.tasks import print_after_3s
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class LoginView(generic.View):
     template_name = "login.html"
 
@@ -25,6 +30,8 @@ class LoginView(generic.View):
         if user := authenticate(password=password, username=username):
             if user.is_active:
                 login(self.request, user)
+                print_after_3s.delay()
+
                 return redirect("home")
 
             # activate

@@ -2,11 +2,10 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from apps.post.models import Post, Like, Comment
 
-
 User = get_user_model()
 
 
-class CommentUserSerializer(serializers.ModelSerializer):
+class MinimalUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("username", "image")
@@ -14,22 +13,32 @@ class CommentUserSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    author = MinimalUserSerializer(read_only=True)
+    likes = serializers.ReadOnlyField(source="likes_count")
+
     class Meta:
         model = Post
-        fields = "__all__"
-        # exclude = ('is_deleted',)
-        # depth = 0
+        read_only_fields = ("is_active",)
+        exclude = ("is_deleted",)
+
+    def create(self, validated_data):
+        validated_data["author"] = self.context["request"].user
+        return super().create(validated_data)
 
 
 class LikesSerializer(serializers.ModelSerializer):
+    user = MinimalUserSerializer(read_only=True)
+
     class Meta:
         model = Like
         exclude = ("create_at", "post", "id")
-        read_only_fields = ("user",)
+
+    def to_representation(self, instance):
+        return super().to_representation(instance)["user"]
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = CommentUserSerializer(read_only=True)
+    user = MinimalUserSerializer(read_only=True)
     replies = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
