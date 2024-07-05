@@ -16,6 +16,7 @@ class LogicalQuerySet(models.QuerySet):
 
 
 class LogicalManager(models.Manager):
+
     def get_queryset_object(self):
         if not hasattr(self.__class__, "__queryset"):
             self.__class__.__queryset = LogicalQuerySet(self.model)
@@ -23,7 +24,7 @@ class LogicalManager(models.Manager):
         return self.__queryset
 
     def get_queryset(self):
-        return super().get_queryset().filter(is_deleted=False)
+        return self.get_queryset_object().filter(is_deleted=False)
 
     @property
     def archived(self):

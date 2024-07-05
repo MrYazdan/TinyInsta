@@ -4,8 +4,10 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
-from apps.user.models import User  # noqa:E402
-from apps.post.models import Post  # noqa:E402
+# from apps.user.models import User  # noqa:E402
+# from apps.post.models import Post  # noqa:E402
+
+from apps.core.models import TModel
 
 # User.objects.create_user(
 #     username="fardin",
@@ -15,10 +17,10 @@ from apps.post.models import Post  # noqa:E402
 #     last_name="zand",
 # )
 
-yazdan = User.objects.get(username="yazdan")
-fardin = User.objects.get(username="fardin")
+# yazdan = User.objects.get(username="yazdan")
+# fardin = User.objects.get(username="fardin")
 
-post = Post.objects.get(id=12)
+# post = Post.objects.get(id=12)
 
 # fardin.follow(yazdan)
 # yazdan.follow(fardin)
@@ -53,3 +55,11 @@ post = Post.objects.get(id=12)
 # print(Post.objects.filter(author=yazdan).query)
 # print(Post.objects.select_related('author').filter(author=yazdan).query)
 # print(Post.objects.annotate(likes_count=Count('likes')).get(id=12))
+
+# TModel.objects.create(name="1")
+# TModel.objects.create(name="2")
+# TModel.objects.create(name="3")
+# TModel.objects.create(name="4")
+# TModel.objects.create(name="5")
+
+TModel.objects.all()
